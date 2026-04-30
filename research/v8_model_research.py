@@ -1364,9 +1364,3 @@ if num_models > 0:
     plt.xlabel("Date", fontsize=12)
     plt.tight_layout()
     plt.show()
-"""
-
-with open('Project_XAU_V32/research/v8_research.py', 'w') as f:
-    f.write(v8_research_code)
-
-print("Saved v8_research.py to Project_XAU_V32/research/v8_research.py")
