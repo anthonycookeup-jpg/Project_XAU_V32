@@ -41,7 +41,7 @@ The engine implements a Regime-Aware Temporal Decay mechanism to ensure modern d
 This model undergoes a specialized two-phase training lifecycle:
 
 1.  **Phase 1: Maturity Champion**: Training on "Pure Physics" to master the baseline geometry of the Gold market.
-2.  **Phase 2: Adversarial Polish**: An Adversary is introduced to inject dynamic noise specifically targeting directional biases, forcing the "Veteran" brain to develop immunity against market manipulation and volatility traps.
+2.  **Phase 2: Adversarial Polish**: Once matured, an Adversary is introduced to inject dynamic noise specifically targeting directional biases, forcing the "Veteran" brain to develop immunity against market manipulation and volatility traps.
 
 ---
 
@@ -67,14 +67,16 @@ The /production layer features a mimic-perfect execution engine designed to sync
 
 ## Audit: Tournament Matrix
 
-The final "Veteran" model is audited against the "Pure Physics" model to verify the impact of adversarial training:
+> **Audit Period**: January 2022 – March 2026 (51 Continuous Months)
 
-| Model Brain | Win Rate | Max Drawdown | Avg Uncertainty |
-| :--- | :---: | :---: | :---: |
-| Maturity (Pure Physics) | 49.25% | 4.49% | 0.2194 |
-| **Veteran (Adversarial)** | **54.76%** | **0.91%** | **0.1654** |
+The final "Veteran" model is audited against the baseline "Pure Physics" model to verify the impact of adversarial training:
 
-**Outcome**: The Adversarial Polish reduced Max Drawdown by approximately 80% while significantly increasing overall signal quality.
+| Model Brain | Total Trades | Win Rate | Max Drawdown | Net PnL | Profit Factor | Avg Uncertainty |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| Maturity (Pure Physics) | 1,594 | 49.25% | 4.49% | -$2,605.91 | 0.98 | 0.2194 |
+| **Veteran (Adversarial)** | **1,114** | **54.76%** | **0.91%** | **+$4,870.02** | **1.24** | **0.1654** |
+
+**Outcome**: The Adversarial Polish reduced Max Drawdown by approximately 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a stable, positive-carry system.
 
 ---
 
