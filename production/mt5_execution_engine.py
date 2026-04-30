@@ -1,8 +1,3 @@
-import os
-
-os.makedirs('Project_XAU_V32/production', exist_ok=True)
-
-v8_production_code = """
 # --- THE MT5 LIVE EXECUTION BRIDGE (Trading_Bot2 V8 CONTINUOUS) ---
 # Ensure you run: pip install MetaTrader5 tensorflow pandas numpy ta optuna scipy arch vmdpy
 # Python Version: 3.11.9
@@ -525,8 +520,3 @@ if __name__ == "__main__":
         print("\\n Live Execution manually halted by operator.")
     finally:
         mt5.shutdown()
-"""
-with open('Project_XAU_V32/production/live_harvester_v8.py', 'w') as f:
-    f.write(v8_production_code)
-
-print("Saved live_harvester_v8.py to Project_XAU_V32/production/live_harvester_v8.py")
