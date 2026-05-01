@@ -9,8 +9,24 @@ This repository implements the **Neuro-Symbolic iTransformer-RNN Adversarial Con
 ### Core Mathematical Pillars:
 
 *   **Variational Mode Decomposition (VMD)**: Employs non-recursive physics decomposition to extract 5 mathematically pure Intrinsic Mode Functions (IMFs), isolating structural trends from high-frequency noise without phase-lag.
+*   **12-Head RoPE Council (Rotary Position Embedding)**: Upgrades standard attention mechanisms to inject precise absolute and relative temporal positioning, allowing the model to analyze micro-market structures without losing the macro-context.
 *   **Liquid CfC (Closed-form Continuous-time) Cells**: Provides continuous-time signal processing to handle irregular temporal intervals and maintain gradient stability during volatile market regimes.
 *   **Bayesian Governor (Monte Carlo Self-Correction)**: Conducts 30 mental simulations per inference pass. If the standard deviation (uncertainty) exceeds 0.80, the trade is rejected as "low-quality noise".
+
+---
+
+## The Communication Highway (PhD Bypass)
+
+*   **Direct-to-Actor Routing**: Traditional AI architectures force all data through a deep analytical bottleneck. This model routes high-frequency, non-stationary "Chaos" sensors directly to the Actor head, skipping the main perception layers. This "PhD Bypass" allows the execution engine to react instantly to sudden regime breaks and volatility shocks before the slower analytical "brain" has finished computing the long-term trend.
+
+---
+
+## Asymmetric Reward Shaping (PINN)
+
+Built on Physics-Informed Neural Network (PINN) principles, the architecture uses Asymmetric Reward Shaping to solve the common reinforcement learning failures of "fear" and "suicide spirals":
+
+*   **The Participation Tax**: Cures model "fear" (hesitation to trade to avoid losses) by applying a micro-penalty for remaining flat when high-probability setups exist. This mathematically forces the bot to actively hunt for alpha.
+*   **The Sudden-Death Governor**: Cures "suicide spirals" (revenge trading during drawdowns). This strict quality control circuit breaker acts as a hard fail-safe, immediately halting the bot and flattening positions if a defined drawdown threshold is breached.
 
 ---
 
