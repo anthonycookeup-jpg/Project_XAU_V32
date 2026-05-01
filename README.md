@@ -73,10 +73,10 @@ The final "Veteran" model is audited against the baseline "Pure Physics" model t
 
 | Model Brain | Total Trades | Win Rate | Max Drawdown | Net PnL | Profit Factor | Recovery Factor | Avg Uncertainty |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Maturity (Pure Physics) | 1,594 | 49.25% | 4.49% | -$2,605.91 | 0.98 | - | 0.2194 |
-| **Veteran (Adversarial)** | **1,114** | **54.76%** | **0.91%** | **+$4,870.02** | **1.24** | **5.35** | **0.1654** |
+| Maturity (Pure Physics) | 1,591 | 48.71% | 5.04% | -$3,275.77 | 0.89 | - | 0.2190 |
+| **Veteran (Adversarial)** | **1,126** | **54.17%** | **0.94%** | **+$4,385.72** | **1.26** | **4.65** | **0.1655** |
 
-**Outcome**: The Adversarial Polish reduced Max Drawdown by approximately 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a stable, positive-carry system with a Recovery Factor of 5.35.
+**Outcome**: The Adversarial Polish reduced Max Drawdown by over 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a highly stable, positive-carry system with a Recovery Factor of 4.65.
 
 ---
 
