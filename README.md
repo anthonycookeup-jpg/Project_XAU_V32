@@ -120,5 +120,6 @@ BSc Applied Mathematics and Statistics Student
 
 ### Instructions for Recruiters:
 
-*   To view the mathematical discovery process, see `/research/v8_model_research.py`.
-*   To view the live MT5 implementation, see `/production/mt5_execution_engine.py`.
+*   To view the mathematical discovery process, see [`research/v8_model_research.py`](research/v8_model_research.py).
+*   To view the live MT5 implementation, see [`production/mt5_execution_engine.py`](production/mt5_execution_engine.py).
+*   To view the raw institutional audit logs, see [`audit/veteran_audit.csv`](audit/veteran_audit.csv) and [`audit/maturity_audit.csv`](audit/maturity_audit.csv).
