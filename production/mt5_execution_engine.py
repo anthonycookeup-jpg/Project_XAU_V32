@@ -25,8 +25,6 @@ from scipy.stats import entropy
 
 mixed_precision.set_global_policy('float32')
 
-WORK_DIR = r"C:\\Users\\Antho\\OneDrive\\Desktop\\XAUmetaC"
-WEIGHTS_FILE = os.path.join(WORK_DIR, "champion_brain_gold_v32.weights.h5") 
 TRADE_LOG_CSV = os.path.join(WORK_DIR, "live_trades_log.csv") 
 
 MAGIC_NUMBER = 777777
