@@ -124,7 +124,7 @@ To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncert
 
 ### **2. Live Production Mode (Market Execution)**
 *   **System RAM:** Optimized for lean, low-latency execution (<1GB binary footprint).
-*   **VRAM:** 22GB Minimum (Retained for real-time Bayesian Governor auditing and 12-Head RoPE Council operations).
+*   **VRAM:** <1GB (Retained for real-time Bayesian Governor auditing and 12-Head RoPE Council operations).
 *   **Environment:** **Python 3.11.9** (TensorFlow/XLA Optimized).
 
 > **Architect’s Note:** The 50GB System RAM ceiling is specifically utilized during the "Stress-Test" phase to ensure a strict **Factor of Safety** consistent with industrial plant quality control standards. Live execution is scaled for maximum throughput efficiency.
