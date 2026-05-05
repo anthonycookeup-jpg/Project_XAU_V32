@@ -115,17 +115,21 @@ The current V8 architecture is the culmination of an iterative development path 
 
 ## ⚙️ Industrial Hardware Requirements
 
-To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncertainty auditing** in real-time, the following hardware stack is required:
+To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncertainty auditing**, the hardware stack is partitioned by operational mode:
 
+### **1. Research & Audit Mode (High-Throughput Testing)**
+*   **System RAM:** 50GB Minimum (Required for high-dimensional tensor staging and parallel regime decomposition during backtesting).
 *   **VRAM:** 22GB Minimum (Optimized for RTX 3090/4090, NVIDIA A100, or H100).
-*   **System RAM:** 50GB Minimum for high-dimensional tensor staging and regime decomposition.
-*   **Compute Architecture:** CUDA 12.4+ required for parallel tensor processing.
-*   **Processing Engine:** Specifically tuned for Liquid CfC cell integration and 12-Head RoPE Council operations.
-*   **Runtime Environment:** **Python 3.11.9** (TensorFlow/XLA Optimized).
+*   **Compute:** CUDA 12.4+ for non-stationary signal decomposition.
 
-> **Architect’s Note on Resource Scaling:** While the production binary footprint is lean (<1GB), the **Runtime Memory State** is intentionally scaled to 50GB+ to ensure zero-latency execution of the Bayesian Governor during non-stationary market regimes. This ensures a strict "Factor of Safety" consistent with industrial plant quality control standards.
+### **2. Live Production Mode (Market Execution)**
+*   **System RAM:** Optimized for lean, low-latency execution (<1GB binary footprint).
+*   **VRAM:** 22GB Minimum (Retained for real-time Bayesian Governor auditing and 12-Head RoPE Council operations).
+*   **Environment:** **Python 3.11.9** (TensorFlow/XLA Optimized).
 
-**Warning:** Attempting to run the V8 engine on hardware with <22GB VRAM or <50GB System RAM will lead to a kernel-level memory overflow during the non-stationary signal decomposition phase.
+> **Architect’s Note:** The 50GB System RAM ceiling is specifically utilized during the "Stress-Test" phase to ensure a strict **Factor of Safety** consistent with industrial plant quality control standards. Live execution is scaled for maximum throughput efficiency.
+
+**Warning:** Attempting to execute the V8 research suite on hardware with <22GB VRAM will lead to a kernel-level memory overflow during the VMD signal isolation phase.
 
 ---
 
