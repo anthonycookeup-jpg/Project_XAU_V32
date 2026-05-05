@@ -121,9 +121,11 @@ To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncert
 *   **System RAM:** 50GB Minimum for high-dimensional tensor staging and regime decomposition.
 *   **Compute Architecture:** CUDA 12.4+ required for parallel tensor processing.
 *   **Processing Engine:** Specifically tuned for Liquid CfC cell integration and 12-Head RoPE Council operations.
-*   **Runtime Environment:** Python 3.11.9 (TensorFlow/XLA Optimized).
+*   **Runtime Environment:** **Python 3.11.9** (TensorFlow/XLA Optimized).
 
-> **Note:** This architecture is built for institutional-grade quality control. Attempting to run the V8 engine on hardware with <22GB VRAM or <50GB System RAM will lead to a kernel-level memory overflow during the non-stationary signal decomposition phase.
+> **Architect’s Note on Resource Scaling:** While the production binary footprint is lean (<1GB), the **Runtime Memory State** is intentionally scaled to 50GB+ to ensure zero-latency execution of the Bayesian Governor during non-stationary market regimes. This ensures a strict "Factor of Safety" consistent with industrial plant quality control standards.
+
+**Warning:** Attempting to run the V8 engine on hardware with <22GB VRAM or <50GB System RAM will lead to a kernel-level memory overflow during the non-stationary signal decomposition phase.
 
 ---
 
