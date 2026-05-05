@@ -113,6 +113,20 @@ The current V8 architecture is the culmination of an iterative development path 
 
 ---
 
+## ⚙️ Industrial Hardware Requirements
+
+To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncertainty auditing** in real-time, the following hardware stack is required:
+
+*   **VRAM:** 22GB Minimum (Optimized for RTX 3090/4090, NVIDIA A100, or H100).
+*   **System RAM:** 50GB Minimum for high-dimensional tensor staging and regime decomposition.
+*   **Compute Architecture:** CUDA 12.4+ required for parallel tensor processing.
+*   **Processing Engine:** Specifically tuned for Liquid CfC cell integration and 12-Head RoPE Council operations.
+*   **Runtime Environment:** Python 3.11.9 (TensorFlow/XLA Optimized).
+
+> **Note:** This architecture is built for institutional-grade quality control. Attempting to run the V8 engine on hardware with <22GB VRAM or <50GB System RAM will lead to a kernel-level memory overflow during the non-stationary signal decomposition phase.
+
+---
+
 **Developed by Anthony Cooke**  
 BSc Applied Mathematics and Statistics Student
 
