@@ -986,7 +986,7 @@ study = optuna.create_study(
 )
 
 for _ in range(1):
-    study.optimize(objective, n_trials=13)
+    study.optimize(objective, n_trials=100)
     shutil.copy(local_db_path, db_path)
     print(f"Progress force-saved to Drive. Best Reward so far: {study.best_value:.6f}")
 
