@@ -95,23 +95,6 @@ The final "Veteran" model is audited against the baseline "Pure Physics" model t
 **Outcome**: The Adversarial Polish reduced Max Drawdown by over 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a highly stable, positive-carry system with a Recovery Factor of 4.65.
 
 ---
-
-## Technical Evolution & Research Roadmap
-
-The current V8 architecture is the culmination of an iterative development path focused on solving specific market physics challenges:
-
-| Date | Engine / Architecture | Key Technical Breakthrough |
-| :--- | :--- | :--- |
-| 2025-09-02 | **MT5 Scripting** | Initial plotting and automated moving average testing. |
-| 2025-10-04 | **LSTM Model** | First transition into temporal sequence modeling. |
-| 2026-01-08 | **CNN-BiLSTM** | Integration of spatial feature extraction and bidirectional memory. |
-| 2026-02-01 | **TGAF-CNN-BiLSTM** | Introduction of gated activation functions for gradient control. |
-| 2026-02-06 | **Transformer-CNN-BiLSTM** | Implementation of Multi-Head Attention mechanisms. |
-| 2026-03-03 | **CEEMDAN-iT-PPO** | **Major Pivot**: Addition of PPO Reinforcement Learning, PINN Physics, and Purged Validation. |
-| 2026-03-22 | **VMD-TCN-TLSTM-CFC** | Migration to non-recursive VMD physics and Liquid CfC cells. |
-| 2026-04-10 | **NS-iT-RACPPO** | **Current SOTA**: Integration of Adversarial Polish and Bayesian Governor. |
-
----
 ## Bayesian Calibration and Harmonic Risk Scaling
 
 The V8 architecture utilizes a multi-stage risk management framework that operates on the output of the Bayesian Governor. While the neural network provides directional conviction ($\mu$) and uncertainty ($\sigma$), the execution engine (Cells 11 and 12) optimizes capital allocation based on the model’s self-reported reliability.
@@ -145,6 +128,22 @@ This comparison demonstrates the impact of applying the Harmonic Risk Layer to t
 | **Profit Factor** | 1.27 | 1.33 | +4.7% |
 | **Recovery Factor** | 4.86 | 5.75 | +18.3% |
 | **Sharpe Ratio** | 2.24 | 2.56 | +14.3% |
+---
+
+## Technical Evolution & Research Roadmap
+
+The current V8 architecture is the culmination of an iterative development path focused on solving specific market physics challenges:
+
+| Date | Engine / Architecture | Key Technical Breakthrough |
+| :--- | :--- | :--- |
+| 2025-09-02 | **MT5 Scripting** | Initial plotting and automated moving average testing. |
+| 2025-10-04 | **LSTM Model** | First transition into temporal sequence modeling. |
+| 2026-01-08 | **CNN-BiLSTM** | Integration of spatial feature extraction and bidirectional memory. |
+| 2026-02-01 | **TGAF-CNN-BiLSTM** | Introduction of gated activation functions for gradient control. |
+| 2026-02-06 | **Transformer-CNN-BiLSTM** | Implementation of Multi-Head Attention mechanisms. |
+| 2026-03-03 | **CEEMDAN-iT-PPO** | **Major Pivot**: Addition of PPO Reinforcement Learning, PINN Physics, and Purged Validation. |
+| 2026-03-22 | **VMD-TCN-TLSTM-CFC** | Migration to non-recursive VMD physics and Liquid CfC cells. |
+| 2026-04-10 | **NS-iT-RACPPO** | **Current SOTA**: Integration of Adversarial Polish and Bayesian Governor. |
 ---
 
 ## ⚙️ Industrial Hardware Requirements
