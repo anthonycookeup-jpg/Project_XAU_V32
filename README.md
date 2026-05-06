@@ -112,6 +112,40 @@ The current V8 architecture is the culmination of an iterative development path 
 | 2026-04-10 | **NS-iT-RACPPO** | **Current SOTA**: Integration of Adversarial Polish and Bayesian Governor. |
 
 ---
+## Bayesian Calibration and Harmonic Risk Scaling
+
+The V8 architecture utilizes a multi-stage risk management framework that operates on the output of the Bayesian Governor. While the neural network provides directional conviction ($\mu$) and uncertainty ($\sigma$), the execution engine (Cells 11 and 12) optimizes capital allocation based on the model’s self-reported reliability.
+
+### Research Stage: Cell 11 - Calibration & Sensitivity Engine
+
+This stage performs a statistical audit of the model’s "honesty." By binning thousands of inference passes into performance tiers based on Bayesian standard deviation, we identified the specific regimes where the model possesses a true mathematical edge.
+
+* **Institutional Binning:** Trades are categorized from Tier 1 (High Conviction) to Tier 5 (Noise/Rejected).
+* **The Profit Factor Diagnostic:** Testing revealed that while the "Toxic" bin (Tier 5) maintained a high win rate, its Profit Factor was significantly lower than the High Conviction tiers. This indicated that high-uncertainty trades were "picking up pennies in front of a steamroller."
+* **Threshold Detection:** A High-Risk Threshold was detected at std > 0.1892, allowing for the automatic damping of low-quality signals.
+
+### Execution Stage: Cell 12 - Harmonic Position Scaling
+
+To translate these research findings into production, Cell 12 replaces static lot sizing with a Harmonic Scaling algorithm. This ensures that the system rewards high-conviction signals while protecting the equity curve during periods of Bayesian confusion.
+
+**The Harmonic Multiplier Formula:**
+$$LotSize = \frac{Risk \cdot |\mu| \cdot (\frac{ideal\_std}{std})^{1.5}}{Price \cdot 0.01}$$
+
+This formula ensures that position sizes are weighted by the inverse of their uncertainty, amplified by a power exponent of 1.5 to maximize the Sharpe Ratio.
+
+### Head-to-Head Performance: Standard vs. Harmonic Execution
+
+This comparison demonstrates the impact of applying the Harmonic Risk Layer to the Veteran Champion on the same 25,000-bar audit period.
+
+| Metric | Veteran (Standard) | Veteran (Harmonic) | Impact |
+| :--- | :--- | :--- | :--- |
+| **Net PnL** | $4,592.12 | $5,735.38 | +24.9% |
+| **Win Rate** | 54.12% | 54.12% | 0.00% |
+| **Max Drawdown** | 0.95% | 0.94% | -0.01% |
+| **Profit Factor** | 1.27 | 1.33 | +4.7% |
+| **Recovery Factor** | 4.86 | 5.75 | +18.3% |
+| **Sharpe Ratio** | 2.24 | 2.56 | +14.3% |
+---
 
 ## ⚙️ Industrial Hardware Requirements
 
