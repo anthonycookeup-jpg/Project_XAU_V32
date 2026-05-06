@@ -87,13 +87,12 @@ The `/production` layer features a mimic-perfect execution engine designed to sy
 
 The final "Veteran" model is audited against the baseline "Pure Physics" model to verify the impact of adversarial training:
 
-| Model Brain | Total Trades | Win Rate | Max Drawdown | Net PnL | Profit Factor | Recovery Factor | Avg Uncertainty |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Maturity (Pure Physics) | 1,591 | 48.71% | 5.04% | -$3,275.77 | 0.89 | - | 0.2190 |
-| **Veteran (Adversarial)** | **1,126** | **54.17%** | **0.94%** | **+$4,385.72** | **1.26** | **4.65** | **0.1655** |
+| Model Brain | Total Trades | Win Rate | Max Drawdown | Net PnL | Profit Factor | Recovery Factor | Sharpe Ratio | Avg Uncertainty |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Maturity (Pure Physics) | 1,597 | 48.65% | 4.77% | -$3,345.93 | 0.89 | -0.70 | -1.37 | 0.2192 |
+| **Veteran (Adversarial)** | **1,129** | **54.12%** | **0.95%** | **+$4,592.12** | **1.27** | **4.86** | **2.24** | **0.1653** |
 
-**Outcome**: The Adversarial Polish reduced Max Drawdown by over 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a highly stable, positive-carry system with a Recovery Factor of 4.65.
-
+**Outcome**: The Adversarial Polish reduced Max Drawdown by over 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a highly stable, positive-carry system with a Recovery Factor of 4.86 and a Sharpe Ratio of 2.24.
 ---
 ## Bayesian Calibration and Harmonic Risk Scaling
 
