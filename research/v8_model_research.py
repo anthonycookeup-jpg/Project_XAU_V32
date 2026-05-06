@@ -1170,16 +1170,18 @@ import pandas as pd
 import tensorflow as tf
 import os
 import gc
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
 print("--- 1. Initializing V8 Normalized Quality Control Audit (Tournament Matrix) ---")
 
-lookback = 332 
+# SETTINGS
+lookback = 332 # QUALITY CONTROL FIX: Matched to Trial 59 Champion DNA to prevent shape mismatch
 audit_bars = 25000
-activation_mu = 0.15   
-max_uncertainty = 0.80 
+activation_mu = 0.15   # Requires at least 15% directional conviction to fire
+max_uncertainty = 0.80 # If the 30 MC simulations disagree (std > 0.8), reject the trade
 risk_per_trade_dollars = 1000.0
 
+# SAFEGUARD: Rebuild df_prod if Colab forgot it
 if 'df_prod' not in locals():
     df_prod = df_final.copy()
     df_prod.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -1189,6 +1191,7 @@ df_audit = df_prod.iloc[-audit_bars:].copy()
 features = df_audit[df_final.columns.tolist()].columns.tolist()
 n_features = len(features)
 
+# --- 2. THE TURBO PRE-PROCESSOR ---
 raw_data = df_audit[features].values
 all_windows = []
 for t in range(lookback, len(df_audit) - 1):
@@ -1199,7 +1202,9 @@ for t in range(lookback, len(df_audit) - 1):
     all_windows.append(obs)
 obs_batch = np.array(all_windows).astype(np.float32)
 
+# --- 3. THE TOURNAMENT MATRIX SETUP ---
 drive_dir = "/content/drive/MyDrive/Forex Data/Checkpoints"
+# We load both the Pure Physics brain and the Battle-Hardened brain for comparison
 models_to_test = {
     "Maturity Champion (Pure Physics)": os.path.join(drive_dir, "safe_maturity_gold_v32.weights.h5"),
     "Veteran Champion (Adversarial)": os.path.join(drive_dir, "champion_brain_gold_v32.weights.h5")
@@ -1209,11 +1214,11 @@ closes = df_audit['XAUUSD_H1_Close'].values[lookback:]
 dates = df_audit.index[lookback:]
 
 tournament_results = []
-heatmap_data = {} 
+heatmap_data = {} # Stores uncertainty arrays for the visualizer
 
 for model_name, model_path in models_to_test.items():
-    print(f"\\n" + "="*65)
-    print(f" AUDITING: {model_name}")
+    print(f"\n" + "="*65)
+    print(f"AUDITING: {model_name}")
     print("="*65)
 
     tf.keras.backend.clear_session()
@@ -1222,14 +1227,15 @@ for model_name, model_path in models_to_test.items():
     audit_agent = build_ppo_agent(lookback=lookback, n_features=n_features)
     try:
         audit_agent.load_weights(model_path)
-        print(f" {model_name} Weights Loaded Successfully.")
+        print(f"{model_name} Weights Loaded Successfully.")
     except Exception as e:
-        print(f" Could not load {model_name}. Skipping. Error: {e}")
+        print(f"Could not load {model_name}. Skipping. Error: {e}")
         continue
 
-    print(" Executing V8 Monte Carlo Inference (30 Passes via Bayesian Governor)...")
+    print("Executing V8 Monte Carlo Inference (30 Passes via Bayesian Governor)...")
     action_params, _ = audit_agent.predict(obs_batch, batch_size=512, verbose=1)
 
+    # --- 4. Normalized Backtest Simulation ---
     account_balance = 100000.0
     peak_balance = account_balance
     max_drawdown = 0.0
@@ -1239,15 +1245,17 @@ for model_name, model_path in models_to_test.items():
     uncertainties = []
 
     for i in range(len(action_params)):
+        # V8 CONTINUOUS PARSER: Extract Gaussian Target and Uncertainty
         mu = action_params[i][0]
         std = action_params[i][1]
         uncertainties.append(std)
 
-        action = 1 
+        action = 1 # Default: Flat
 
+        # QUALITY CONTROL: The Self-Correction Gate
         if std < max_uncertainty:
-            if mu > activation_mu: action = 2 
-            elif mu < -activation_mu: action = 0 
+            if mu > activation_mu: action = 2 # Long
+            elif mu < -activation_mu: action = 0 # Short
 
         current_price, time_stamp = closes[i], dates[i]
 
@@ -1264,7 +1272,8 @@ for model_name, model_path in models_to_test.items():
         elif current_pos == 1 and action != 2:
             pnl = (current_price - entry_price) * lot_multiplier
             account_balance += pnl
-            trades.append({'Entry': entry_time, 'Exit': time_stamp, 'Type': 'LONG', 'PnL': pnl, 'Balance': account_balance, 'Uncertainty': entry_std})
+            # Added 'Return' metric for Sharpe Ratio calculation
+            trades.append({'Entry': entry_time, 'Exit': time_stamp, 'Type': 'LONG', 'PnL': pnl, 'Return': pnl/account_balance, 'Balance': account_balance, 'Uncertainty': entry_std})
             current_pos = -1 if action == 0 else 0
             entry_price = current_price if current_pos != 0 else 0
             if current_pos != 0:
@@ -1274,7 +1283,8 @@ for model_name, model_path in models_to_test.items():
         elif current_pos == -1 and action != 0:
             pnl = (entry_price - current_price) * lot_multiplier
             account_balance += pnl
-            trades.append({'Entry': entry_time, 'Exit': time_stamp, 'Type': 'SHORT', 'PnL': pnl, 'Balance': account_balance, 'Uncertainty': entry_std})
+            # Added 'Return' metric for Sharpe Ratio calculation
+            trades.append({'Entry': entry_time, 'Exit': time_stamp, 'Type': 'SHORT', 'PnL': pnl, 'Return': pnl/account_balance, 'Balance': account_balance, 'Uncertainty': entry_std})
             current_pos = 1 if action == 2 else 0
             entry_price = current_price if current_pos != 0 else 0
             if current_pos != 0:
@@ -1285,18 +1295,51 @@ for model_name, model_path in models_to_test.items():
             peak_balance = account_balance
         max_drawdown = max(max_drawdown, (peak_balance - account_balance) / peak_balance)
 
+    # Save heatmap data for this specific model
     heatmap_data[model_name] = uncertainties
 
+    # --- 5. Individual Report ---
     if trades:
-        win_rate = (len([t for t in trades if t['PnL'] > 0]) / len(trades)) * 100
-        avg_uncertainty = np.mean([t['Uncertainty'] for t in trades])
-        net_pnl = account_balance - 100000
+        df_trades = pd.DataFrame(trades)
+        
+        win_rate = (len(df_trades[df_trades['PnL'] > 0]) / len(df_trades)) * 100
+        avg_uncertainty = df_trades['Uncertainty'].mean()
+        net_pnl = account_balance - 100000.0
+
+        # METRICS: Profit Factor, Recovery Factor & Sharpe Ratio
+        gross_profit = df_trades[df_trades['PnL'] > 0]['PnL'].sum()
+        gross_loss = abs(df_trades[df_trades['PnL'] < 0]['PnL'].sum())
+        profit_factor = gross_profit / gross_loss if gross_loss > 0 else float('inf')
+
+        return_pct = net_pnl / 100000.0
+        recovery_factor = return_pct / max_drawdown if max_drawdown > 0 else 0.0
+        
+        # Calculate Sharpe Ratio
+        returns = df_trades['Return']
+        sharpe_ratio = (returns.mean() / (returns.std() + 1e-9)) * np.sqrt(len(df_trades))
 
         print(f"Final Balance: ${account_balance:,.2f} | Net: ${net_pnl:,.2f}")
         print(f"Total Trades: {len(trades)} | Win Rate: {win_rate:.2f}% | Max DD: {max_drawdown*100:.2f}%")
+        print(f"Profit Factor: {profit_factor:.2f} | Recovery Factor: {recovery_factor:.2f} | Sharpe Ratio: {sharpe_ratio:.2f}")
         print(f"Average AI Uncertainty on Entry: {avg_uncertainty:.4f} (Lower = Higher Quality)")
 
-        df_trades = pd.DataFrame(trades)
+        # ---------------------------------------------------------
+        # QUALITY CONTROL: RECENT 30 TRADES AUDIT ADDED HERE
+        # ---------------------------------------------------------
+        print("\n" + "-"*40)
+        print(f" RECENT 30 TRADES AUDIT ({model_name})")
+        print("-"*40)
+
+        if len(df_trades) >= 30:
+            last_30_trades = df_trades.tail(30).copy()
+        else:
+            last_30_trades = df_trades.copy()
+            print(f"Note: Only {len(df_trades)} trades executed in total.")
+
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 1000, 'display.float_format', '{:.4f}'.format):
+            print(last_30_trades.to_string(index=False))
+        # ---------------------------------------------------------
+
         df_trades['Month'] = pd.to_datetime(df_trades['Exit']).dt.strftime('%Y-%m')
         monthly_stats = []
 
@@ -1317,7 +1360,7 @@ for model_name, model_path in models_to_test.items():
             })
 
         with pd.option_context('display.max_rows', None):
-            print("\\nMonthly Breakdown:")
+            print("\nMonthly Breakdown:")
             print(pd.DataFrame(monthly_stats).to_string(index=False))
 
         tournament_results.append({
@@ -1325,27 +1368,35 @@ for model_name, model_path in models_to_test.items():
             "Net PnL": f"${net_pnl:,.2f}",
             "Win Rate": f"{win_rate:.2f}%",
             "Max DD": f"{max_drawdown*100:.2f}%",
+            "Profit Factor": f"{profit_factor:.2f}",
+            "Recovery Factor": f"{recovery_factor:.2f}",
+            "Sharpe Ratio": f"{sharpe_ratio:.2f}",
             "Avg Uncertainty": f"{avg_uncertainty:.4f}"
         })
     else:
-        print(" No trades executed. (If unexpected, check if max_uncertainty is too strict).")
+        print("No trades executed. (If unexpected, check if max_uncertainty is too strict).")
         tournament_results.append({
             "Brain": model_name,
             "Net PnL": "$0.00",
             "Win Rate": "0.00%",
             "Max DD": "0.00%",
+            "Profit Factor": "0.00",
+            "Recovery Factor": "0.00",
+            "Sharpe Ratio": "0.00",
             "Avg Uncertainty": "N/A"
         })
 
-print("\\n" + "="*25)
+# --- 6. GRAND TOURNAMENT MATRIX OUTPUT ---
+print("\n" + "="*50)
 print(" V8 TOURNAMENT MATRIX: MATURITY VS VETERAN")
-print("="*25)
+print("="*50)
 df_matrix = pd.DataFrame(tournament_results)
 print(df_matrix.to_string(index=False))
 
-print("\\n" + "="*25)
+# --- 7. CONFIDENCE HEATMAP VISUALIZATION ---
+print("\n" + "-"*50)
 print(" GENERATING CONFIDENCE HEATMAPS...")
-print("="*25)
+print("-"*50)
 
 num_models = len(heatmap_data)
 if num_models > 0:
@@ -1353,6 +1404,7 @@ if num_models > 0:
     if num_models == 1: axes = [axes]
 
     for ax, (model_name, uncerts) in zip(axes, heatmap_data.items()):
+        # Plot the price chart colored by uncertainty
         sc = ax.scatter(dates[:len(uncerts)], closes[:len(uncerts)], c=uncerts, cmap='Reds', s=5, alpha=0.8)
         ax.set_title(f"{model_name}: 2026 Gold Confusion Heatmap", fontsize=14, fontweight='bold')
         ax.set_ylabel("XAUUSD Price", fontsize=12)
@@ -1364,3 +1416,189 @@ if num_models > 0:
     plt.xlabel("Date", fontsize=12)
     plt.tight_layout()
     plt.show()
+
+
+# --- CELL 11: V8 CALIBRATION & SENSITIVITY ENGINE ---
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+print("--- 1. Initializing V8 Quality Control & Sensitivity Audit ---")
+
+# Ensure trade data is present
+if 'trades' not in locals() or len(trades) == 0:
+    print("Error: No trade data found. Please run the Veteran Audit first.")
+else:
+    df_calib = pd.DataFrame(trades)
+    df_calib['Win'] = (df_calib['PnL'] > 0).astype(int)
+    
+    # 1. THE EMPIRICAL BINNING ENGINE
+    # Divide trades into 5 quantiles based on Bayesian Uncertainty (Std)
+    try:
+        df_calib['Uncertainty_Bin'] = pd.qcut(df_calib['Uncertainty'], q=5, 
+                                              labels=['Tier 1 (High Conviction)', 
+                                                      'Tier 2 (High)', 
+                                                      'Tier 3 (Moderate)', 
+                                                      'Tier 4 (Low)', 
+                                                      'Tier 5 (Noise/Rejected)'])
+    except ValueError:
+        # Fallback if standard deviations are clustered
+        df_calib['Uncertainty_Bin'] = pd.cut(df_calib['Uncertainty'], bins=5, 
+                                             labels=['Tier 1 (High Conviction)', 
+                                                     'Tier 2 (High)', 
+                                                     'Tier 3 (Moderate)', 
+                                                     'Tier 4 (Low)', 
+                                                     'Tier 5 (Noise/Rejected)'])
+
+    # 2. CALCULATE INSTITUTIONAL METRICS (Profit Factor & Win Rate)
+    def calc_pf(group):
+        pos = group[group['PnL'] > 0]['PnL'].sum()
+        neg = abs(group[group['PnL'] < 0]['PnL'].sum())
+        return pos / neg if neg != 0 else np.inf
+
+    stats = df_calib.groupby('Uncertainty_Bin', observed=False).agg(
+        Total_Trades=('Win', 'count'),
+        Win_Rate=('Win', 'mean'),
+        Total_PnL=('PnL', 'sum'),
+        Avg_Std=('Uncertainty', 'mean')
+    )
+    stats['Profit_Factor'] = df_calib.groupby('Uncertainty_Bin', observed=False).apply(calc_pf)
+
+    print("\n---------------------------------------------------------")
+    print(" V8 QUALITY CONTROL MATRIX")
+    print("---------------------------------------------------------")
+    print(stats.to_string())
+
+    # 3. AUTOMATIC RISK RECALIBRATION
+    # Reference the exact institutional label to calculate the threshold
+    toxic_threshold = df_calib.groupby('Uncertainty_Bin', observed=False)['Uncertainty'].min()['Tier 5 (Noise/Rejected)']
+    ideal_std = df_calib['Uncertainty'].median()
+    
+    # Global parameters for Cell 12
+    power_exponent = 1.5 
+    print(f"\nQC Recalibration: High-Risk Threshold detected at std > {toxic_threshold:.4f}")
+    print(f"Baseline Confidence (ideal_std) set to: {ideal_std:.4f}")
+
+    # 4. EXPECTED CALIBRATION ERROR (ECE) PROXY
+    empirical_acc = df_calib.groupby('Uncertainty_Bin', observed=False)['Win'].mean().values
+    avg_conf = 1.0 - df_calib.groupby('Uncertainty_Bin', observed=False)['Uncertainty'].mean().values 
+    bin_weights = df_calib.groupby('Uncertainty_Bin', observed=False)['Win'].count().values / len(df_calib)
+    ece = np.sum(bin_weights * np.abs(empirical_acc - avg_conf))
+    
+    print(f"Expected Calibration Error (ECE Proxy): {ece:.4f}")
+
+    # 5. PROFESSIONAL DIAGNOSTIC VISUALIZATION
+    plt.style.use('seaborn-v0_8-whitegrid')
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+
+    x_labels = stats.index.astype(str)
+    x_pos = np.arange(len(x_labels))
+    
+    # Bar Chart: Profit Factor
+    color_bar = '#2c3e50'
+    ax1.bar(x_pos, stats['Profit_Factor'], width=0.4, color=color_bar, alpha=0.7, label='Profit Factor')
+    ax1.set_xlabel('Bayesian Uncertainty Bin', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('Profit Factor (Gross Profit / Gross Loss)', color=color_bar, fontsize=12, fontweight='bold')
+    ax1.tick_params(axis='y', labelcolor=color_bar)
+    ax1.set_xticks(x_pos)
+    ax1.set_xticklabels(x_labels)
+    ax1.axhline(1.0, color='red', linestyle='--', linewidth=1, alpha=0.5) # Breakeven line
+
+    # Line Chart: Win Rate (Twin Axis)
+    ax2 = ax1.twinx()
+    color_line = '#2980b9'
+    ax2.plot(x_pos, stats['Win_Rate'] * 100, color=color_line, marker='o', linewidth=2.5, markersize=8, label='Win Rate (%)')
+    ax2.set_ylabel('Empirical Win Rate (%)', color=color_line, fontsize=12, fontweight='bold')
+    ax2.tick_params(axis='y', labelcolor=color_line)
+
+    plt.title('V8 Architecture: Calibration & Performance Distribution', fontsize=14, fontweight='bold', pad=15)
+    
+    # Legend handling for dual axis
+    lines_1, labels_1 = ax1.get_legend_handles_labels()
+    lines_2, labels_2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper right', frameon=True, shadow=True)
+
+    plt.tight_layout()
+    plt.show()
+
+
+# --- CELL 12: HARMONIC V8 AUDIT (POWER SCALING & SHARPE) ---
+import numpy as np
+import pandas as pd
+import os
+
+print("--- Rerunning Veteran Champion with Harmonic Scaling & Advanced Metrics ---")
+
+# Initialization
+refined_trades = []
+account_balance = 100000.0
+initial_balance = 100000.0
+peak_balance = account_balance
+max_dd_dollars = 0.0
+current_pos = 0
+
+# Iterating through the predictions from the main audit
+for i in range(len(action_params)):
+    mu = action_params[i][0]
+    std = action_params[i][1]
+    
+    # THE HARMONIC GATE: Non-linear position sizing
+    harmonic_multiplier = np.power((ideal_std / (std + 1e-8)), power_exponent)
+    harmonic_multiplier = np.clip(harmonic_multiplier, 0.2, 2.5) 
+
+    action = 1 
+    if std < max_uncertainty:
+        if mu > activation_mu: action = 2 
+        elif mu < -activation_mu: action = 0 
+
+    current_price, time_stamp = closes[i], dates[i]
+
+    if current_pos == 0:
+        if action != 1:
+            current_pos = 1 if action == 2 else -1
+            entry_price, entry_time, entry_std = current_price, time_stamp, std
+            lot_multiplier = (risk_per_trade_dollars * abs(mu) * harmonic_multiplier) / (entry_price * 0.01)
+            
+    elif (current_pos == 1 and action != 2) or (current_pos == -1 and action != 0):
+        side_mult = 1 if current_pos == 1 else -1
+        pnl = (current_price - entry_price) * side_mult * lot_multiplier
+        account_balance += pnl
+        refined_trades.append({'PnL': pnl, 'Return': pnl/account_balance, 'Balance': account_balance, 'Uncertainty': entry_std})
+        current_pos = 0
+
+    # TRACKING PEAKS & DOLLAR DRAWDOWN
+    if account_balance > peak_balance: 
+        peak_balance = account_balance
+        
+    current_dd_dollars = peak_balance - account_balance
+    if current_dd_dollars > max_dd_dollars: 
+        max_dd_dollars = current_dd_dollars
+
+# --- ADVANCED QC CALCULATIONS ---
+df_res = pd.DataFrame(refined_trades)
+net_pnl = account_balance - initial_balance
+
+# 1. Recovery Factor & Sharpe Ratio
+recovery_factor = net_pnl / max_dd_dollars if max_dd_dollars > 0 else np.inf
+returns = df_res['Return']
+sharpe_ratio = (returns.mean() / (returns.std() + 1e-9)) * np.sqrt(len(df_res))
+
+# 2. Institutional Win Rate & Profit Factor
+refined_wr = (len(df_res[df_res['PnL'] > 0]) / len(df_res)) * 100
+pos_pnl = df_res[df_res['PnL'] > 0]['PnL'].sum()
+neg_pnl = abs(df_res[df_res['PnL'] < 0]['PnL'].sum())
+profit_factor = pos_pnl / neg_pnl if neg_pnl > 0 else np.inf
+
+# --- FINAL REPORT ---
+print("\n=========================================================")
+print(f" V8 HARMONIC QC REPORT (Power={power_exponent})")
+print("=========================================================")
+print(f"Final Balance:   ${account_balance:,.2f}")
+print(f"Net PnL:         ${net_pnl:,.2f}")
+print(f"Win Rate:        {refined_wr:.2f}%")
+print(f"Profit Factor:   {profit_factor:.2f}")
+print(f"Max DD:          ${max_dd_dollars:,.2f} ({ (max_dd_dollars/peak_balance)*100 :.2f}%)")
+print(f"Recovery Factor: {recovery_factor:.2f}")
+print(f"Sharpe Ratio:    {sharpe_ratio:.2f}")
+print(f"Trades Pruned:   {len(action_params) - len(df_res)} out of {len(action_params)}")
+print("=========================================================")
