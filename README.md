@@ -160,7 +160,7 @@ To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncert
 *   **VRAM:** <1GB (Retained for real-time Bayesian Governor auditing and 12-Head RoPE Council operations).
 *   **Environment:** **Python 3.11.9** (TensorFlow/XLA Optimized).
 
-> **Architect’s Note:** The 50GB System RAM ceiling is specifically utilized during the "Stress-Test" phase to ensure a strict **Factor of Safety** consistent with industrial plant quality control standards. Live execution is scaled for maximum throughput efficiency.
+> **Architect’s Note:** The 50GB System RAM ceiling is specifically utilized during the "Stress-Test" phase to ensure a strict **Factor of Safety** consistent with quality control standards. Live execution is scaled for maximum throughput efficiency.
 
 **Warning:** Attempting to execute the V8 research suite on hardware with <22GB VRAM will lead to a kernel-level memory overflow during the VMD signal isolation phase.
 
