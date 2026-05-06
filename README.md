@@ -92,7 +92,7 @@ The final "Veteran" model is audited against the baseline "Pure Physics" model t
 | Maturity (Pure Physics) | 1,597 | 48.65% | 4.77% | -$3,345.93 | 0.89 | -0.70 | -1.37 | 0.2192 |
 | **Veteran (Adversarial)** | **1,129** | **54.12%** | **0.95%** | **+$4,592.12** | **1.27** | **4.86** | **2.24** | **0.1653** |
 
-**Outcome**: The Adversarial Polish reduced Max Drawdown by over 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a highly stable, positive-carry system with a Recovery Factor of 4.86 and a Sharpe Ratio of 2.24.
+**Outcome:** The Adversarial Polish reduced Max Drawdown by over 80%. By filtering for high-conviction entries through the Bayesian Governor, the model transformed a negative expectancy baseline into a highly stable, positive-carry system with a Recovery Factor of 4.86 and a Sharpe Ratio of 2.24.
 ---
 ## Bayesian Calibration and Harmonic Risk Scaling
 
