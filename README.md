@@ -177,3 +177,6 @@ BSc Applied Mathematics and Statistics Student
 *   To view the live MT5 implementation, see [`production/mt5_execution_engine.py`](production/mt5_execution_engine.py).
 *   To view the raw institutional audit logs, see [`audit/veteran_audit.csv`](audit/veteran_audit.csv) and [`audit/maturity_audit.csv`](audit/maturity_audit.csv).
 *   To view the high-resolution Bayesian Uncertainty Heatmap, see [`assets/Veteran_vs_Maturity_Heatmap.png`](assets/Veteran_vs_Maturity_Heatmap.png).
+* To view the empirical calibration data, see [`audit/v8_qc_calibration_matrix.csv`](audit/v8_qc_calibration_matrix.csv).
+* To view the head-to-head harmonic scaling metrics, see [`audit/v8_harmonic_scaling_report.csv`](audit/v8_harmonic_scaling_report.csv).
+* To view the professional diagnostic visualization, see [`assets/v8_calibration_performance_distribution.png`](assets/v8_calibration_performance_distribution.png).
