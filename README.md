@@ -165,8 +165,26 @@ To maintain the **0.94% Max Drawdown** and execute the **30-pass Bayesian uncert
 
 ---
 
-**Developed by Anthony Cooke**  
-BSc Applied Mathematics and Statistics Student
+## **Intellectual Property & Access Control**
+
+Due to the high-conviction nature of the **V8 Neuro-Symbolic Architecture** and the proprietary **Harmonic Risk Scaling** logic, the full source code and model weights are currently hosted in a private repository to prevent unauthorized commercial replication. This measure ensures the integrity of the strategy and the protection of the underlying alpha.
+
+**For Recruiters & Quantitative Researchers:** I am happy to provide full access to the source code, training logs, and live execution environment upon request for interview or auditing purposes.
+
+* **Request Access via LinkedIn:** Anthony Cooke
+
+---
+
+**Developed by Anthony Cooke** BSc Applied Mathematics and Statistics Student
+
+---
+
+### **Instructions for Recruiters:**
+
+* **Quantitative Research:** The full research suite, including the Variational Mode Decomposition (VMD) phase and the 12-Head RoPE Council logic, is available in the private repository.
+* **Production Engine:** The live MT5 execution script featuring the **Harmonic Scaler** and real-time **Bayesian Governor** auditing is available for review upon request.
+* **Audit Logs:** Raw institutional audit logs (`veteran_audit.csv` and `maturity_audit.csv`) are available in this repository to verify the 2.56 Sharpe Ratio and 5.75 Recovery Factor.
+* **Visual Portfolio:** High-resolution Bayesian Uncertainty Heatmaps and Calibration Curves can be viewed in the `/assets` folder of this repository.
 
 ---
 
